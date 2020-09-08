@@ -2,10 +2,14 @@ import jieba
 import jieba.analyse
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--file', required=True, type=str)
+args = parser.parse_args()
 
 class ElasticObj:
-    def __init__(self, index_name, index_type, passage_path, ip ="192.168.1.29"):
+    def __init__(self, index_name, index_type, passage_path, ip):
         '''
         :param index_name: 索引名称
         :param index_type: 索引类型
@@ -59,8 +63,11 @@ class ElasticObj:
         with open(self.passage_path) as f: 
             for line in f:
                 lineList = line.strip().split("\t")
-                q = lineList[0]
-                a = lineList[1]
+                try:
+                    q = lineList[0]
+                    a = lineList[1]
+                except:
+                    continue
                 q_tag = jieba.analyse.extract_tags(q, topK = 10)
                 a_tag = jieba.analyse.extract_tags(a, topK = 10)
                 action = {
@@ -81,9 +88,9 @@ class ElasticObj:
 
 if __name__ == '__main__':
     
-    ip = "192.168.1.29"
+    ip = "127.0.0.1"
     index_name = "0616"
     index_type = "_doc"
-    obj = ElasticObj(index_name, index_type, ip=ip, passage_path='faq.txt')
+    obj = ElasticObj(index_name, index_type, ip=ip, passage_path=args.file)
     obj.create_index(index_name, index_type)
     obj.bulk_Index_Data()

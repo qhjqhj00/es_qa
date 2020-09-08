@@ -7,8 +7,7 @@ import jieba.analyse
 from elasticsearch import Elasticsearch
 
 es = Elasticsearch(
-    ['192.168.1.29'],
-    port=9200
+    ['127.0.0.1']
 )
 
 app = Flask(__name__, static_url_path='')
@@ -50,4 +49,4 @@ def index():
     return app.send_static_file('index.html')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=1234, debug=True)
+    app.run(host='0.0.0.0', port=6796, debug=True)
